@@ -18,8 +18,9 @@ npm run typecheck
 npm run build
 ```
 
-## Status
+## Privacy boundary
 
-The current contract contains the platform health endpoint. Financial resources
-will be added after authentication, storage and privacy rules are accepted in
-the main product architecture.
+The contract includes the local `Entry` vocabulary so native clients can share
+fixtures and semantics. The optional sync backend accepts only
+`EncryptedSyncRecord` envelopes. A plaintext entry is not a remote financial
+CRUD resource and is encrypted on-device before it crosses the sync boundary.

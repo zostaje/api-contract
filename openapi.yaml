@@ -45,3 +45,107 @@ components:
           type: string
         requestId:
           type: string
+    Money:
+      type: object
+      additionalProperties: false
+      required: [minorUnits, currency]
+      properties:
+        minorUnits:
+          type: integer
+          description: Signed amount expressed in the currency's minor units.
+        currency:
+          type: string
+          pattern: "^[A-Z]{3}$"
+    Entry:
+      type: object
+      additionalProperties: false
+      description: Local plaintext domain object. It is encrypted before sync.
+      required: [id, text, kind, status, source, createdAt, updatedAt]
+      properties:
+        id:
+          type: string
+          format: uuid
+        text:
+          type: string
+          minLength: 1
+          maxLength: 2000
+        kind:
+          type: string
+          enum: [note, expense, income, plan, goal, question]
+        status:
+          type: string
+          enum: [inbox, confirmed, done, archived]
+        source:
+          type: string
+          enum: [text, voice, receipt, import, shortcut, mcp]
+        amount:
+          $ref: "#/components/schemas/Money"
+        occurredAt:
+          type: string
+          format: date-time
+        dueAt:
+          type: string
+          format: date-time
+        category:
+          type: string
+          maxLength: 80
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+    Consequence:
+      type: object
+      additionalProperties: false
+      required: [kind, explanation]
+      properties:
+        kind:
+          type: string
+          enum:
+            - reduces_safe_to_spend
+            - funds_goal
+            - delays_goal
+            - creates_commitment
+            - matches_recurring_pattern
+            - needs_answer
+        explanation:
+          type: string
+          minLength: 1
+          maxLength: 500
+        delta:
+          $ref: "#/components/schemas/Money"
+    EncryptedSyncRecord:
+      type: object
+      additionalProperties: false
+      description: Opaque record accepted by the optional E2E sync service.
+      required:
+        [id, deviceId, version, algorithm, keyVersion, nonce, ciphertext, deleted, updatedAt]
+      properties:
+        id:
+          type: string
+          format: uuid
+        deviceId:
+          type: string
+          format: uuid
+        version:
+          type: integer
+          minimum: 1
+        algorithm:
+          type: string
+          const: AES-256-GCM
+        keyVersion:
+          type: integer
+          minimum: 1
+        nonce:
+          type: string
+          minLength: 16
+          maxLength: 64
+        ciphertext:
+          type: string
+          minLength: 16
+        deleted:
+          type: boolean
+        updatedAt:
+          type: string
+          format: date-time

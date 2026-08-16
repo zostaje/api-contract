@@ -1,7 +1,12 @@
 import assert from 'node:assert/strict';
 import { test } from 'node:test';
 
-import { API_VERSION, HealthResponseSchema } from './index.js';
+import {
+  API_VERSION,
+  EncryptedSyncRecordSchema,
+  EntrySchema,
+  HealthResponseSchema,
+} from './index.js';
 
 test('health response contract accepts the current API version', () => {
   const result = HealthResponseSchema.parse({
@@ -11,4 +16,37 @@ test('health response contract accepts the current API version', () => {
   });
 
   assert.equal(result.apiVersion, 'v1');
+});
+
+test('entry contract preserves original financial notebook text', () => {
+  const entry = EntrySchema.parse({
+    id: 'a14e7bd8-332a-43db-9d16-04cc55cc4f07',
+    text: "McDonald's 24,50",
+    kind: 'expense',
+    status: 'inbox',
+    source: 'text',
+    amount: { minorUnits: 2450, currency: 'PLN' },
+    category: 'Jedzenie',
+    createdAt: '2026-08-16T12:00:00+02:00',
+    updatedAt: '2026-08-16T12:00:00+02:00',
+  });
+
+  assert.equal(entry.text, "McDonald's 24,50");
+  assert.equal(entry.amount?.minorUnits, 2450);
+});
+
+test('sync contract accepts opaque encrypted records only', () => {
+  const record = EncryptedSyncRecordSchema.parse({
+    id: '01a2ef08-8b12-4bdf-8f66-bc543aeb4c35',
+    deviceId: '15ef7900-7e0c-46a3-8d9e-f5cb5a622b01',
+    version: 3,
+    algorithm: 'AES-256-GCM',
+    keyVersion: 1,
+    nonce: 'AAECAwQFBgcICQoL',
+    ciphertext: 'encrypted-base64-payload',
+    updatedAt: '2026-08-16T12:00:00+02:00',
+  });
+
+  assert.equal(record.deleted, false);
+  assert.equal(record.version, 3);
 });
