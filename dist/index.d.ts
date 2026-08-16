@@ -1,4 +1,4 @@
-import { z } from 'zod';
+import { z } from "zod";
 export declare const API_VERSION: "v1";
 export declare const HealthResponseSchema: z.ZodObject<{
     status: z.ZodLiteral<"ok">;
@@ -161,3 +161,173 @@ export declare const EncryptedSyncRecordSchema: z.ZodObject<{
     deleted?: boolean | undefined;
 }>;
 export type EncryptedSyncRecord = z.infer<typeof EncryptedSyncRecordSchema>;
+export declare const SyncConflictSchema: z.ZodObject<{
+    id: z.ZodString;
+    reason: z.ZodEnum<["stale_version", "same_version_different_payload"]>;
+    serverVersion: z.ZodNumber;
+}, "strip", z.ZodTypeAny, {
+    id: string;
+    reason: "stale_version" | "same_version_different_payload";
+    serverVersion: number;
+}, {
+    id: string;
+    reason: "stale_version" | "same_version_different_payload";
+    serverVersion: number;
+}>;
+export declare const SyncPushRequestSchema: z.ZodObject<{
+    records: z.ZodArray<z.ZodObject<{
+        id: z.ZodString;
+        deviceId: z.ZodString;
+        version: z.ZodNumber;
+        algorithm: z.ZodLiteral<"AES-256-GCM">;
+        keyVersion: z.ZodNumber;
+        nonce: z.ZodString;
+        ciphertext: z.ZodString;
+        deleted: z.ZodDefault<z.ZodBoolean>;
+        updatedAt: z.ZodString;
+    }, "strip", z.ZodTypeAny, {
+        id: string;
+        updatedAt: string;
+        deviceId: string;
+        version: number;
+        algorithm: "AES-256-GCM";
+        keyVersion: number;
+        nonce: string;
+        ciphertext: string;
+        deleted: boolean;
+    }, {
+        id: string;
+        updatedAt: string;
+        deviceId: string;
+        version: number;
+        algorithm: "AES-256-GCM";
+        keyVersion: number;
+        nonce: string;
+        ciphertext: string;
+        deleted?: boolean | undefined;
+    }>, "many">;
+}, "strip", z.ZodTypeAny, {
+    records: {
+        id: string;
+        updatedAt: string;
+        deviceId: string;
+        version: number;
+        algorithm: "AES-256-GCM";
+        keyVersion: number;
+        nonce: string;
+        ciphertext: string;
+        deleted: boolean;
+    }[];
+}, {
+    records: {
+        id: string;
+        updatedAt: string;
+        deviceId: string;
+        version: number;
+        algorithm: "AES-256-GCM";
+        keyVersion: number;
+        nonce: string;
+        ciphertext: string;
+        deleted?: boolean | undefined;
+    }[];
+}>;
+export declare const SyncPushResponseSchema: z.ZodObject<{
+    accepted: z.ZodArray<z.ZodString, "many">;
+    unchanged: z.ZodArray<z.ZodString, "many">;
+    conflicts: z.ZodArray<z.ZodObject<{
+        id: z.ZodString;
+        reason: z.ZodEnum<["stale_version", "same_version_different_payload"]>;
+        serverVersion: z.ZodNumber;
+    }, "strip", z.ZodTypeAny, {
+        id: string;
+        reason: "stale_version" | "same_version_different_payload";
+        serverVersion: number;
+    }, {
+        id: string;
+        reason: "stale_version" | "same_version_different_payload";
+        serverVersion: number;
+    }>, "many">;
+    cursor: z.ZodNumber;
+}, "strip", z.ZodTypeAny, {
+    accepted: string[];
+    unchanged: string[];
+    conflicts: {
+        id: string;
+        reason: "stale_version" | "same_version_different_payload";
+        serverVersion: number;
+    }[];
+    cursor: number;
+}, {
+    accepted: string[];
+    unchanged: string[];
+    conflicts: {
+        id: string;
+        reason: "stale_version" | "same_version_different_payload";
+        serverVersion: number;
+    }[];
+    cursor: number;
+}>;
+export declare const SyncPullResponseSchema: z.ZodObject<{
+    records: z.ZodArray<z.ZodObject<{
+        id: z.ZodString;
+        deviceId: z.ZodString;
+        version: z.ZodNumber;
+        algorithm: z.ZodLiteral<"AES-256-GCM">;
+        keyVersion: z.ZodNumber;
+        nonce: z.ZodString;
+        ciphertext: z.ZodString;
+        deleted: z.ZodDefault<z.ZodBoolean>;
+        updatedAt: z.ZodString;
+    }, "strip", z.ZodTypeAny, {
+        id: string;
+        updatedAt: string;
+        deviceId: string;
+        version: number;
+        algorithm: "AES-256-GCM";
+        keyVersion: number;
+        nonce: string;
+        ciphertext: string;
+        deleted: boolean;
+    }, {
+        id: string;
+        updatedAt: string;
+        deviceId: string;
+        version: number;
+        algorithm: "AES-256-GCM";
+        keyVersion: number;
+        nonce: string;
+        ciphertext: string;
+        deleted?: boolean | undefined;
+    }>, "many">;
+    cursor: z.ZodNumber;
+}, "strip", z.ZodTypeAny, {
+    records: {
+        id: string;
+        updatedAt: string;
+        deviceId: string;
+        version: number;
+        algorithm: "AES-256-GCM";
+        keyVersion: number;
+        nonce: string;
+        ciphertext: string;
+        deleted: boolean;
+    }[];
+    cursor: number;
+}, {
+    records: {
+        id: string;
+        updatedAt: string;
+        deviceId: string;
+        version: number;
+        algorithm: "AES-256-GCM";
+        keyVersion: number;
+        nonce: string;
+        ciphertext: string;
+        deleted?: boolean | undefined;
+    }[];
+    cursor: number;
+}>;
+export type SyncConflict = z.infer<typeof SyncConflictSchema>;
+export type SyncPushRequest = z.infer<typeof SyncPushRequestSchema>;
+export type SyncPushResponse = z.infer<typeof SyncPushResponseSchema>;
+export type SyncPullResponse = z.infer<typeof SyncPullResponseSchema>;
