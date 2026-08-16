@@ -76,6 +76,58 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/ApiError"
+  /v1/sync/export:
+    get:
+      operationId: exportEncryptedSyncRecords
+      summary: Export the complete encrypted cloud copy
+      security:
+        - deviceBearer: []
+      responses:
+        "200":
+          description: Portable, versioned encrypted export
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/EncryptedExportResponse"
+        "401":
+          description: Invalid device credential
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ApiError"
+  /v1/sync:
+    delete:
+      operationId: deleteEncryptedCloudCopy
+      summary: Delete every encrypted record owned by the authenticated owner
+      security:
+        - deviceBearer: []
+      parameters:
+        - name: X-Zostaje-Confirm-Delete
+          in: header
+          required: true
+          description: Must be exactly delete-cloud-copy.
+          schema:
+            type: string
+            const: delete-cloud-copy
+      responses:
+        "200":
+          description: Cloud deletion result
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/CloudDeletionResponse"
+        "400":
+          description: Missing destructive-action confirmation
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ApiError"
+        "401":
+          description: Invalid device credential
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ApiError"
         "401":
           description: Invalid device credential
           content:
@@ -288,3 +340,32 @@ components:
         cursor:
           type: integer
           minimum: 0
+    EncryptedExportResponse:
+      type: object
+      additionalProperties: false
+      required: [exportVersion, exportedAt, cursor, records]
+      properties:
+        exportVersion:
+          type: integer
+          const: 1
+        exportedAt:
+          type: string
+          format: date-time
+        cursor:
+          type: integer
+          minimum: 0
+        records:
+          type: array
+          items:
+            $ref: "#/components/schemas/EncryptedSyncRecord"
+    CloudDeletionResponse:
+      type: object
+      additionalProperties: false
+      required: [deletedRecords, deletedAt]
+      properties:
+        deletedRecords:
+          type: integer
+          minimum: 0
+        deletedAt:
+          type: string
+          format: date-time

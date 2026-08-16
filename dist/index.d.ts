@@ -331,3 +331,81 @@ export type SyncConflict = z.infer<typeof SyncConflictSchema>;
 export type SyncPushRequest = z.infer<typeof SyncPushRequestSchema>;
 export type SyncPushResponse = z.infer<typeof SyncPushResponseSchema>;
 export type SyncPullResponse = z.infer<typeof SyncPullResponseSchema>;
+export declare const EncryptedExportResponseSchema: z.ZodObject<{
+    exportVersion: z.ZodLiteral<1>;
+    exportedAt: z.ZodString;
+    cursor: z.ZodNumber;
+    records: z.ZodArray<z.ZodObject<{
+        id: z.ZodString;
+        deviceId: z.ZodString;
+        version: z.ZodNumber;
+        algorithm: z.ZodLiteral<"AES-256-GCM">;
+        keyVersion: z.ZodNumber;
+        nonce: z.ZodString;
+        ciphertext: z.ZodString;
+        deleted: z.ZodDefault<z.ZodBoolean>;
+        updatedAt: z.ZodString;
+    }, "strip", z.ZodTypeAny, {
+        id: string;
+        updatedAt: string;
+        deviceId: string;
+        version: number;
+        algorithm: "AES-256-GCM";
+        keyVersion: number;
+        nonce: string;
+        ciphertext: string;
+        deleted: boolean;
+    }, {
+        id: string;
+        updatedAt: string;
+        deviceId: string;
+        version: number;
+        algorithm: "AES-256-GCM";
+        keyVersion: number;
+        nonce: string;
+        ciphertext: string;
+        deleted?: boolean | undefined;
+    }>, "many">;
+}, "strip", z.ZodTypeAny, {
+    records: {
+        id: string;
+        updatedAt: string;
+        deviceId: string;
+        version: number;
+        algorithm: "AES-256-GCM";
+        keyVersion: number;
+        nonce: string;
+        ciphertext: string;
+        deleted: boolean;
+    }[];
+    cursor: number;
+    exportVersion: 1;
+    exportedAt: string;
+}, {
+    records: {
+        id: string;
+        updatedAt: string;
+        deviceId: string;
+        version: number;
+        algorithm: "AES-256-GCM";
+        keyVersion: number;
+        nonce: string;
+        ciphertext: string;
+        deleted?: boolean | undefined;
+    }[];
+    cursor: number;
+    exportVersion: 1;
+    exportedAt: string;
+}>;
+export declare const CloudDeletionResponseSchema: z.ZodObject<{
+    deletedRecords: z.ZodNumber;
+    deletedAt: z.ZodString;
+}, "strip", z.ZodTypeAny, {
+    deletedRecords: number;
+    deletedAt: string;
+}, {
+    deletedRecords: number;
+    deletedAt: string;
+}>;
+export type EncryptedExportResponse = z.infer<typeof EncryptedExportResponseSchema>;
+export type CloudDeletionResponse = z.infer<typeof CloudDeletionResponseSchema>;

@@ -93,3 +93,13 @@ export const SyncPullResponseSchema = z.object({
     records: z.array(EncryptedSyncRecordSchema).max(500),
     cursor: z.number().int().nonnegative(),
 });
+export const EncryptedExportResponseSchema = z.object({
+    exportVersion: z.literal(1),
+    exportedAt: z.string().datetime({ offset: true }),
+    cursor: z.number().int().nonnegative(),
+    records: z.array(EncryptedSyncRecordSchema),
+});
+export const CloudDeletionResponseSchema = z.object({
+    deletedRecords: z.number().int().nonnegative(),
+    deletedAt: z.string().datetime({ offset: true }),
+});

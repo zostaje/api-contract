@@ -3,7 +3,9 @@ import { test } from "node:test";
 
 import {
   API_VERSION,
+  CloudDeletionResponseSchema,
   EncryptedSyncRecordSchema,
+  EncryptedExportResponseSchema,
   EntrySchema,
   HealthResponseSchema,
   SyncPullResponseSchema,
@@ -94,4 +96,20 @@ test("push contract rejects an empty or oversized batch", () => {
     }).success,
     false,
   );
+});
+
+test("encrypted export is versioned and deletion reports removed count", () => {
+  const exported = EncryptedExportResponseSchema.parse({
+    exportVersion: 1,
+    exportedAt: "2026-08-16T12:00:00+02:00",
+    cursor: 0,
+    records: [],
+  });
+  const deleted = CloudDeletionResponseSchema.parse({
+    deletedRecords: 0,
+    deletedAt: "2026-08-16T12:01:00+02:00",
+  });
+
+  assert.equal(exported.exportVersion, 1);
+  assert.equal(deleted.deletedRecords, 0);
 });

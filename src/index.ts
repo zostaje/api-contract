@@ -128,3 +128,20 @@ export type SyncConflict = z.infer<typeof SyncConflictSchema>;
 export type SyncPushRequest = z.infer<typeof SyncPushRequestSchema>;
 export type SyncPushResponse = z.infer<typeof SyncPushResponseSchema>;
 export type SyncPullResponse = z.infer<typeof SyncPullResponseSchema>;
+
+export const EncryptedExportResponseSchema = z.object({
+  exportVersion: z.literal(1),
+  exportedAt: z.string().datetime({ offset: true }),
+  cursor: z.number().int().nonnegative(),
+  records: z.array(EncryptedSyncRecordSchema),
+});
+
+export const CloudDeletionResponseSchema = z.object({
+  deletedRecords: z.number().int().nonnegative(),
+  deletedAt: z.string().datetime({ offset: true }),
+});
+
+export type EncryptedExportResponse = z.infer<
+  typeof EncryptedExportResponseSchema
+>;
+export type CloudDeletionResponse = z.infer<typeof CloudDeletionResponseSchema>;
