@@ -76,6 +76,12 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/ApiError"
+        "401":
+          description: Invalid device credential
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ApiError"
   /v1/sync/export:
     get:
       operationId: exportEncryptedSyncRecords
@@ -128,12 +134,17 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/ApiError"
-        "401":
-          description: Invalid device credential
+  /v1/capabilities:
+    get:
+      operationId: getCapabilities
+      summary: Discover API limits, features and privacy boundary
+      responses:
+        "200":
+          description: Current API capabilities
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/ApiError"
+                $ref: "#/components/schemas/CapabilitiesResponse"
 components:
   securitySchemes:
     deviceBearer:
@@ -158,7 +169,7 @@ components:
     ApiError:
       type: object
       additionalProperties: false
-      required: [code, message]
+      required: [code, message, requestId]
       properties:
         code:
           type: string
@@ -166,6 +177,8 @@ components:
           type: string
         requestId:
           type: string
+          minLength: 8
+          maxLength: 128
     Money:
       type: object
       additionalProperties: false
@@ -369,3 +382,52 @@ components:
         deletedAt:
           type: string
           format: date-time
+    CapabilitiesResponse:
+      type: object
+      additionalProperties: false
+      required:
+        - apiVersion
+        - storage
+        - plaintextFinancialDataReadable
+        - limits
+        - features
+      properties:
+        apiVersion:
+          type: string
+          const: v1
+        storage:
+          type: string
+          const: encrypted_sync_only
+        plaintextFinancialDataReadable:
+          type: boolean
+          const: false
+        limits:
+          type: object
+          additionalProperties: false
+          required: [pushBatchRecords, pullBatchRecords, pushBodyBytes]
+          properties:
+            pushBatchRecords:
+              type: integer
+              const: 100
+            pullBatchRecords:
+              type: integer
+              const: 500
+            pushBodyBytes:
+              type: integer
+              const: 524288
+        features:
+          type: object
+          additionalProperties: false
+          required: [encryptedSync, encryptedExport, cloudDeletion, remoteMcp]
+          properties:
+            encryptedSync:
+              type: boolean
+              const: true
+            encryptedExport:
+              type: boolean
+              const: true
+            cloudDeletion:
+              type: boolean
+              const: true
+            remoteMcp:
+              type: boolean

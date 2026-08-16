@@ -3,6 +3,8 @@ import { test } from "node:test";
 
 import {
   API_VERSION,
+  ApiErrorSchema,
+  CapabilitiesResponseSchema,
   CloudDeletionResponseSchema,
   EncryptedSyncRecordSchema,
   EncryptedExportResponseSchema,
@@ -112,4 +114,41 @@ test("encrypted export is versioned and deletion reports removed count", () => {
 
   assert.equal(exported.exportVersion, 1);
   assert.equal(deleted.deletedRecords, 0);
+});
+
+test("capabilities expose limits and the server privacy boundary", () => {
+  const capabilities = CapabilitiesResponseSchema.parse({
+    apiVersion: API_VERSION,
+    storage: "encrypted_sync_only",
+    plaintextFinancialDataReadable: false,
+    limits: {
+      pushBatchRecords: 100,
+      pullBatchRecords: 500,
+      pushBodyBytes: 524288,
+    },
+    features: {
+      encryptedSync: true,
+      encryptedExport: true,
+      cloudDeletion: true,
+      remoteMcp: false,
+    },
+  });
+
+  assert.equal(capabilities.plaintextFinancialDataReadable, false);
+  assert.equal(capabilities.limits.pushBatchRecords, 100);
+});
+
+test("API errors require a correlation request ID", () => {
+  assert.equal(
+    ApiErrorSchema.safeParse({ code: "invalid", message: "Invalid" }).success,
+    false,
+  );
+  assert.equal(
+    ApiErrorSchema.parse({
+      code: "invalid",
+      message: "Invalid",
+      requestId: "request-123",
+    }).requestId,
+    "request-123",
+  );
 });

@@ -17,15 +17,15 @@ export type HealthResponse = z.infer<typeof HealthResponseSchema>;
 export declare const ApiErrorSchema: z.ZodObject<{
     code: z.ZodString;
     message: z.ZodString;
-    requestId: z.ZodOptional<z.ZodString>;
+    requestId: z.ZodString;
 }, "strip", z.ZodTypeAny, {
     code: string;
     message: string;
-    requestId?: string | undefined;
+    requestId: string;
 }, {
     code: string;
     message: string;
-    requestId?: string | undefined;
+    requestId: string;
 }>;
 export type ApiError = z.infer<typeof ApiErrorSchema>;
 export declare const EntryKindSchema: z.ZodEnum<["note", "expense", "income", "plan", "goal", "question"]>;
@@ -409,3 +409,68 @@ export declare const CloudDeletionResponseSchema: z.ZodObject<{
 }>;
 export type EncryptedExportResponse = z.infer<typeof EncryptedExportResponseSchema>;
 export type CloudDeletionResponse = z.infer<typeof CloudDeletionResponseSchema>;
+export declare const CapabilitiesResponseSchema: z.ZodObject<{
+    apiVersion: z.ZodLiteral<"v1">;
+    storage: z.ZodLiteral<"encrypted_sync_only">;
+    plaintextFinancialDataReadable: z.ZodLiteral<false>;
+    limits: z.ZodObject<{
+        pushBatchRecords: z.ZodLiteral<100>;
+        pullBatchRecords: z.ZodLiteral<500>;
+        pushBodyBytes: z.ZodLiteral<524288>;
+    }, "strip", z.ZodTypeAny, {
+        pushBatchRecords: 100;
+        pullBatchRecords: 500;
+        pushBodyBytes: 524288;
+    }, {
+        pushBatchRecords: 100;
+        pullBatchRecords: 500;
+        pushBodyBytes: 524288;
+    }>;
+    features: z.ZodObject<{
+        encryptedSync: z.ZodLiteral<true>;
+        encryptedExport: z.ZodLiteral<true>;
+        cloudDeletion: z.ZodLiteral<true>;
+        remoteMcp: z.ZodBoolean;
+    }, "strip", z.ZodTypeAny, {
+        encryptedSync: true;
+        encryptedExport: true;
+        cloudDeletion: true;
+        remoteMcp: boolean;
+    }, {
+        encryptedSync: true;
+        encryptedExport: true;
+        cloudDeletion: true;
+        remoteMcp: boolean;
+    }>;
+}, "strip", z.ZodTypeAny, {
+    apiVersion: "v1";
+    storage: "encrypted_sync_only";
+    plaintextFinancialDataReadable: false;
+    limits: {
+        pushBatchRecords: 100;
+        pullBatchRecords: 500;
+        pushBodyBytes: 524288;
+    };
+    features: {
+        encryptedSync: true;
+        encryptedExport: true;
+        cloudDeletion: true;
+        remoteMcp: boolean;
+    };
+}, {
+    apiVersion: "v1";
+    storage: "encrypted_sync_only";
+    plaintextFinancialDataReadable: false;
+    limits: {
+        pushBatchRecords: 100;
+        pullBatchRecords: 500;
+        pushBodyBytes: 524288;
+    };
+    features: {
+        encryptedSync: true;
+        encryptedExport: true;
+        cloudDeletion: true;
+        remoteMcp: boolean;
+    };
+}>;
+export type CapabilitiesResponse = z.infer<typeof CapabilitiesResponseSchema>;

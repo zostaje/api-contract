@@ -13,7 +13,7 @@ export type HealthResponse = z.infer<typeof HealthResponseSchema>;
 export const ApiErrorSchema = z.object({
   code: z.string(),
   message: z.string(),
-  requestId: z.string().optional(),
+  requestId: z.string().min(8).max(128),
 });
 
 export type ApiError = z.infer<typeof ApiErrorSchema>;
@@ -145,3 +145,22 @@ export type EncryptedExportResponse = z.infer<
   typeof EncryptedExportResponseSchema
 >;
 export type CloudDeletionResponse = z.infer<typeof CloudDeletionResponseSchema>;
+
+export const CapabilitiesResponseSchema = z.object({
+  apiVersion: z.literal(API_VERSION),
+  storage: z.literal("encrypted_sync_only"),
+  plaintextFinancialDataReadable: z.literal(false),
+  limits: z.object({
+    pushBatchRecords: z.literal(100),
+    pullBatchRecords: z.literal(500),
+    pushBodyBytes: z.literal(524_288),
+  }),
+  features: z.object({
+    encryptedSync: z.literal(true),
+    encryptedExport: z.literal(true),
+    cloudDeletion: z.literal(true),
+    remoteMcp: z.boolean(),
+  }),
+});
+
+export type CapabilitiesResponse = z.infer<typeof CapabilitiesResponseSchema>;
