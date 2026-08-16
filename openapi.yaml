@@ -1,0 +1,47 @@
+openapi: 3.1.0
+info:
+  title: Zostaje API
+  version: 0.0.4-alpha
+  description: Versioned contract shared by native iOS and desktop clients.
+servers:
+  - url: http://127.0.0.1:4100
+    description: Local development
+paths:
+  /health:
+    get:
+      operationId: getHealth
+      summary: Check API availability and contract version
+      responses:
+        "200":
+          description: API is available
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/HealthResponse"
+components:
+  schemas:
+    HealthResponse:
+      type: object
+      additionalProperties: false
+      required: [status, service, apiVersion]
+      properties:
+        status:
+          type: string
+          const: ok
+        service:
+          type: string
+          const: zostaje-api
+        apiVersion:
+          type: string
+          const: v1
+    ApiError:
+      type: object
+      additionalProperties: false
+      required: [code, message]
+      properties:
+        code:
+          type: string
+        message:
+          type: string
+        requestId:
+          type: string
